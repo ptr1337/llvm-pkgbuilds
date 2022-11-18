@@ -1,0 +1,23 @@
+pkgbase = lldb
+	pkgdesc = Next generation, high-performance debugger
+	pkgver = 15.0.5
+	pkgrel = 1
+	url = https://lldb.llvm.org/
+	arch = x86_64
+	license = custom:Apache 2.0 with LLVM Exception
+	makedepends = llvm
+	makedepends = cmake
+	makedepends = ninja
+	makedepends = swig
+	makedepends = python-sphinx
+	depends = llvm-libs
+	depends = clang
+	depends = python
+	depends = python-six
+	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.5/lldb-15.0.5.src.tar.xz
+	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.5/lldb-15.0.5.src.tar.xz.sig
+	validpgpkeys = 474E22316ABF4785A88C6E8EA2C794A986419D8A
+	sha256sums = f058ca745df7ed9327801a48ec25e1190a9cbed62f2ad16a325f0667994ae6b0
+	sha256sums = SKIP
+
+pkgname = lldb

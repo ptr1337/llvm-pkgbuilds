@@ -1,0 +1,73 @@
+# Maintainer: Evangelos Foutras <evangelos@foutrelis.com>
+# Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
+
+pkgname=lld
+pkgver=15.0.5
+pkgrel=1
+pkgdesc="Linker from the LLVM project"
+arch=('x86_64')
+url="https://lld.llvm.org/"
+license=('custom:Apache 2.0 with LLVM Exception')
+depends=('llvm-libs')
+makedepends=('llvm' 'cmake' 'ninja' 'python-sphinx')
+options=('!lto') # LTO causes a couple of test failures
+_source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver
+source=($_source_base/lld-$pkgver.src.tar.xz{,.sig}
+        $_source_base/llvm-$pkgver.src.tar.xz{,.sig}
+        $_source_base/libunwind-$pkgver.src.tar.xz{,.sig})
+sha256sums=('55241cb1ccc9cb3a8006373c58a8071990973ebfa67ed9b508a125492f4c005e'
+            'SKIP'
+            '4428688b567ab1c9911aa9e13cb44c9bc1b14431713c14de491e10369f2b0370'
+            'SKIP'
+            'a1616b6114af17a50dd85139dc8d54c347cffc0ec998acc809c8be8d1edab0d3'
+            'SKIP')
+validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A') # Tom Stellard <tstellar@redhat.com>
+
+prepare() {
+  # https://bugs.llvm.org/show_bug.cgi?id=49228
+  mv libunwind{-$pkgver.src,}
+
+  cd lld-$pkgver.src
+  mkdir build
+}
+
+build() {
+  cd lld-$pkgver.src/build
+
+  local cmake_args=(
+    -G Ninja
+    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_INSTALL_PREFIX=/usr
+    -DCMAKE_INSTALL_DOCDIR=share/doc
+    -DCMAKE_SKIP_RPATH=ON
+    -DLLVM_BUILD_DOCS=ON
+    -DLLVM_ENABLE_SPHINX=ON
+    -DLLVM_EXTERNAL_LIT=/usr/bin/lit
+    -DLLVM_INCLUDE_TESTS=ON
+    -DLLVM_LINK_LLVM_DYLIB=ON
+    -DLLVM_MAIN_SRC_DIR="$srcdir/llvm-$pkgver.src"
+    -DSPHINX_WARNINGS_AS_ERRORS=OFF
+  )
+  cmake .. "${cmake_args[@]}"
+  ninja
+}
+
+check() {
+  cd lld-$pkgver.src/build
+  ninja check-lld
+}
+
+package() {
+  cd lld-$pkgver.src/build
+
+  DESTDIR="$pkgdir" ninja install
+  install -Dm644 ../LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+
+  # https://bugs.llvm.org/show_bug.cgi?id=42455
+  install -Dm644 -t "$pkgdir/usr/share/man/man1" ../docs/ld.lld.1
+
+  # Remove documentation sources
+  rm -r "$pkgdir"/usr/share/doc/lld/html/{_sources,.buildinfo}
+}
+
+# vim:set ts=2 sw=2 et:
