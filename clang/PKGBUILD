@@ -2,7 +2,7 @@
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
 pkgname=clang
-pkgver=15.0.5
+pkgver=15.0.6
 pkgrel=1
 pkgdesc="C language family frontend for LLVM"
 arch=('x86_64')
@@ -74,7 +74,8 @@ prepare() {
 
 build() {
   cd clang-$pkgver.src/build
-
+export CC=clang
+export CXX=clang++
   local cmake_args=(
     -G Ninja
     -DCMAKE_BUILD_TYPE=Release

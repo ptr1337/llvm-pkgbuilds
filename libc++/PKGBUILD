@@ -5,7 +5,7 @@
 
 pkgbase=libc++
 pkgname=(libc++ libc++abi)
-pkgver=15.0.5
+pkgver=15.0.6
 pkgrel=1
 url="https://libcxx.llvm.org/"
 license=('custom:Apache 2.0 with LLVM Exception')

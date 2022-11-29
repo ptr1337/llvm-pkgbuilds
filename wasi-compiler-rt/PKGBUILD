@@ -1,7 +1,7 @@
 # Maintainer: Frederik Schwan <freswa at archlinux dot org>
 
 pkgname=wasi-compiler-rt
-pkgver=15.0.5
+pkgver=15.0.6
 pkgrel=1
 pkgdesc='WASI LLVM compiler runtime'
 arch=('any')

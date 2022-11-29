@@ -2,7 +2,7 @@
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
 pkgname=lldb
-pkgver=15.0.5
+pkgver=15.0.6
 pkgrel=1
 pkgdesc="Next generation, high-performance debugger"
 arch=('x86_64')

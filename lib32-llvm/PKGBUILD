@@ -3,7 +3,7 @@
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
 pkgname=('lib32-llvm' 'lib32-llvm-libs')
-pkgver=15.0.5
+pkgver=15.0.6
 pkgrel=1
 arch=('x86_64')
 url="https://llvm.org/"

@@ -1,7 +1,7 @@
 # Maintainer: Evangelos Foutras <evangelos@foutrelis.com>
 
 pkgname=openmp
-pkgver=15.0.5
+pkgver=15.0.6
 pkgrel=1
 pkgdesc="LLVM OpenMP Runtime Library"
 arch=('x86_64')

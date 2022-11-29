@@ -1,7 +1,7 @@
 # Maintainer: Evangelos Foutras <evangelos@foutrelis.com>
 
 pkgname=polly
-pkgver=15.0.5
+pkgver=15.0.6
 pkgrel=1
 pkgdesc="High-level loop and data-locality optimizer and optimization infrastructure for LLVM"
 arch=('x86_64')

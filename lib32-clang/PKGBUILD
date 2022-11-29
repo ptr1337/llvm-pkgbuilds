@@ -2,7 +2,7 @@
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
 pkgname=lib32-clang
-pkgver=15.0.5
+pkgver=15.0.6
 pkgrel=1
 pkgdesc="C language family frontend for LLVM (32-bit)"
 arch=('x86_64')

@@ -2,7 +2,7 @@
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
 pkgname=compiler-rt
-pkgver=15.0.5
+pkgver=15.0.6
 pkgrel=1
 pkgdesc="Compiler runtime libraries for clang"
 arch=('x86_64')
@@ -30,7 +30,8 @@ prepare() {
 
 build() {
   cd compiler-rt-$pkgver.src/build
-
+export CC=clang
+export CXX=clang++
   local cmake_args=(
     -G Ninja
     -DCMAKE_BUILD_TYPE=Release
