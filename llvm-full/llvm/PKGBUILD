@@ -1,0 +1,272 @@
+#!/usr/bin/bash
+
+pkgbase=llvm
+pkgname=('lldb' 'lld' 'polly' 'compiler-rt' 'clang' 'llvm-libs' 'llvm') 
+pkgdesc='Low Level Virtual Machine (git version)'
+pkgver=15.0.6
+pkgrel=2
+arch=('x86_64' 'x86_64_v3')
+url="https://llvm.org/"
+license=('custom:Apache 2.0 with LLVM Exception')
+makedepends=('git' 'cmake' 'ninja' 'libffi' 'libedit' 'ncurses' 'libxml2'
+             'python-sphinx' 'lua53' 'clang' 'llvm' 'lld'
+             'python-recommonmark' 'python-sphinx-automodapi' 'ocl-icd' 'opencl-headers' 'python-yaml' 'python-setuptools'
+             'swig' 'python' 'libunwind' 'mold')
+source=("llvm-project::git+https://github.com/llvm/llvm-project.git#commit=088f33605d8a61ff519c580a71b1dd57d16a03f8"
+        "llvm-config.h"
+        "kCFI.patch"
+        "improvekernel.patch"
+        "bolt.patch"
+        "bolt2.patch"
+        "bolt3.patch")
+sha512sums=('SKIP'
+            '75e743dea28b280943b3cc7f8bbb871b57d110a7f2b9da2e6845c1c36bf170dd883fca54e463f5f49e0c3effe07fbd0db0f8cf5a12a2469d3f792af21a73fcdd'
+            'e67dbcf38f3dab9772c7cab8a75e86cccf86e63d0f1754ad67c9bcb340a21c9a87580cf7df7611da4de2b78f3996e4fdd0b15da8e2bd3687b2723094dec7d22c'
+            '2a5d6583e0783c041db4218ad725728dc349b5673d0370a51b1cc3ab1ff7114457a2d480590212ffec53c67d00ddfd65855fd784ac972885c462cc1e306292da'
+            'ba8505c43b63ba4484faa317ce40f347669e7cdb3a8bc06635eb62ecce781edbd6e3555c8f6aae9b4f3837b58f5ee73c7546d9950594ffda283ba2a4e53f03d2'
+            'b88ca1105c926ddf6498c29c32ded62b05e5ca8f0cbc994728911dc7f001924a183d5fd5efc06399269bfd3130c775ad7145abe0b7f940b5b7e75cc486583bb3'
+            'cd5e732742afa808772983fc97249ed2b06ab0c3bfde4411abc96ddf68d5d5d9ebacb99d09004b6e4d742ec4b9b9a30540b735df7e01bc55fe4c6e4ac7e1f305')
+options=('staticlibs' '!debug' '!lto')
+
+
+_python_optimize() {
+    python -m compileall "$@"
+    python -O -m compileall "$@"
+    python -OO -m compileall "$@"
+}
+
+prepare() {
+    cd llvm-project
+    patch -Np1 < "$srcdir"/kCFI.patch
+    patch -Np1 < "$srcdir"/improvekernel.patch
+    patch -Np1 < "$srcdir"/bolt.patch
+    patch -Np1 < "$srcdir"/bolt2.patch
+    patch -Np1 < "$srcdir"/bolt3.patch
+    # llvm-project contains a lot of stuff, remove parts that aren't used by this package
+    rm -rf "$srcdir"/fakeinstall
+}
+
+build() {
+
+  # Build only minimal debug info to reduce size
+ # CFLAGS=${CFLAGS/-g /-g1 }
+ # CXXFLAGS=${CXXFLAGS/-g /-g1 }
+  
+    cmake \
+        -B _build \
+        -S llvm-project/llvm  -G Ninja \
+        -Wno-dev \
+        -D CMAKE_C_FLAGS="$CFLAGS" \
+        -D CMAKE_CXX_FLAGS="$CXXFLAGS" \
+        -D CMAKE_BUILD_TYPE=Release \
+        -D CMAKE_INSTALL_PREFIX=/usr \
+        -D CMAKE_INSTALL_DOCDIR=share/doc \
+        -D LLVM_APPEND_VC_REV=ON \
+        -D LLVM_HOST_TRIPLE="$CHOST" \
+        -D LLVM_ENABLE_RTTI=ON \
+        -D LLVM_ENABLE_FFI=ON \
+        -D LLVM_BINUTILS_INCDIR=/usr/include \
+        -D FFI_INCLUDE_DIR="$(pkg-config --variable=includedir libffi)" \
+        -D LLVM_BUILD_LLVM_DYLIB=ON \
+        -D LLVM_LINK_LLVM_DYLIB=ON \
+        -D LLVM_ENABLE_BINDINGS=OFF \
+        -D LLVM_INSTALL_UTILS=ON \
+        -D LLVM_BUILD_DOCS=ON \
+        -D LLVM_INCLUDE_BENCHMARKS=OFF \
+        -D LLVM_ENABLE_SPHINX=ON \
+        -D LLVM_ENABLE_DOXYGEN=OFF \
+        -D LLVM_ENABLE_BINDINGS=OFF \
+        -D LLVM_INCLUDE_BENCHMARKS=OFF \
+        -D LLVM_USE_PERF=ON \
+        -D SPHINX_WARNINGS_AS_ERRORS=OFF \
+        -D POLLY_ENABLE_GPGPU_CODEGEN=ON \
+        -D LLVM_VERSION_SUFFIX="" \
+        -D LLDB_ENABLE_PYTHON=ON \
+        -D LLDB_USE_SYSTEM_SIX=1 \
+        -D CMAKE_C_COMPILER=clang \
+        -D CMAKE_CXX_COMPILER=clang++ \
+        -D LLVM_USE_LINKER=mold \
+        -D LLVM_ENABLE_LTO=OFF \
+        -D LLVM_ENABLE_PROJECTS="lldb;polly;compiler-rt;lld;clang-tools-extra;clang;bolt"
+
+    ninja -C _build all
+    DESTDIR="$srcdir/fakeinstall" ninja -C _build install
+}
+
+_fakeinstall () {
+    local src f dir
+    for src; do
+        f="${src#fakeinstall/}"
+        dir="$pkgdir/${f%/*}"
+        install -m755 -d "$dir"
+        mv -v "$src" "$dir/"
+    done
+}
+
+package_lldb() {
+    _pythonver="$(python -V | sed 's/.* \([0-9]\)\.\([0-9]*\)\..*/\1.\2/')"
+    pkgdesc="Next generation, high-performance debugger"
+    url="https://lldb.llvm.org/"
+    license=('custom:Apache 2.0 with LLVM Exception')
+    depends=('llvm-libs' 'clang' 'python' 'python-six')
+    options=('!debug')
+
+    _fakeinstall fakeinstall/usr/bin/lldb*
+    _fakeinstall fakeinstall/usr/include/lldb
+    _fakeinstall fakeinstall/usr/lib/liblldb*
+    _fakeinstall fakeinstall/usr/lib/python"$_pythonver"/site-packages/lldb
+    _fakeinstall fakeinstall/usr/share/man/man1/lldb*
+    _fakeinstall fakeinstall/usr/share/doc/lldb/*
+    install -Dm644 "$srcdir"/llvm-project/lldb/LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+#    rm -r "$pkgdir"/usr/share/doc/lldb/html/.buildinfo
+}
+
+package_lld(){
+    pkgdesc="Linker from the LLVM project"
+    arch=('x86_64')
+    url="https://lld.llvm.org/"
+    license=('custom:Apache 2.0 with LLVM Exception')
+    depends=('llvm-libs')
+    options=('!debug')
+
+    _fakeinstall fakeinstall/usr/include/lld
+    _fakeinstall fakeinstall/usr/lib/liblld*
+    _fakeinstall fakeinstall/usr/lib/cmake/lld/
+    _fakeinstall fakeinstall/usr/bin/{lld*,*.lld,wasm-ld}
+    _fakeinstall fakeinstall/usr/share/doc/lld/*
+    install -Dm644 "$srcdir"/llvm-project/lld/docs/ld.lld.1 "$pkgdir/usr/share/man/man1"
+    install -Dm644 "$srcdir"/llvm-project/lld/LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    #cd $pkgdir/usr/share/doc/lld
+    #mv lld/* .
+#    rm -r "$pkgdir"/usr/share/doc/lld/html/{_sources,.buildinfo}
+}
+
+package_polly() {
+    pkgdesc="High-level loop and data-locality optimizer and optimization infrastructure for LLVM"
+    url="https://polly.llvm.org/"
+    license=('custom:Apache 2.0 with LLVM Exception')
+    depends=('gcc-libs')
+    options=('!debug')
+    
+    _fakeinstall fakeinstall/usr/include/polly
+    _fakeinstall fakeinstall/usr/lib/cmake/polly/
+    _fakeinstall fakeinstall/usr/lib/*Polly*
+    _fakeinstall fakeinstall/usr/lib/libGPU*
+    install -Dm644 "$srcdir"/llvm-project/polly/LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+     _fakeinstall fakeinstall/usr/share/doc/polly/*
+     _fakeinstall fakeinstall/usr/share/man/man1/polly*
+     rm -r "$pkgdir"/usr/share/doc/polly/html/{_sources,.buildinfo}
+}
+
+package_compiler-rt() {
+    pkgdesc="Compiler runtime libraries for clang"
+    url="https://compiler-rt.llvm.org/"
+    license=('custom:Apache 2.0 with LLVM Exception')
+    depends=('gcc-libs')
+    options=('!debug')
+    local _llvmver=$(echo "$pkgver" | grep -Po "(^[\.\d]+)")
+
+    _fakeinstall fakeinstall/usr/lib/clang/"$_llvmver"/lib/"$CHOST"
+    _fakeinstall fakeinstall/usr/lib/clang/"$_llvmver"/include/{sanitizer,xray}
+    _fakeinstall fakeinstall/usr/lib/clang/"$_llvmver"/share
+
+    install -Dm644 "$srcdir"/llvm-project/clang/LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+
+package_clang() {
+    _pythonver="$(python -V | sed 's/.* \([0-9]\)\.\([0-9]*\)\..*/\1.\2/')"
+    optdepends=('openmp: OpenMP support in clang with -fopenmp'
+                'python: for scan-view and git-clang-format'
+                'llvm: referenced by some clang headers')
+    provides=("clang-analyzer=$pkgver" "clang-tools-extra=$pkgver")
+    pkgdesc="C language family frontend for LLVM"
+    url="https://clang.llvm.org/"
+    conflicts=('clang-analyzer' 'clang-tools-extra')
+    replaces=('clang-analyzer' 'clang-tools-extra')
+    options=('!debug')
+
+    _fakeinstall fakeinstall/usr/bin/*clang*
+    _fakeinstall fakeinstall/usr/bin/{c-index-test,diagtool,find-all-symbols}
+    _fakeinstall fakeinstall/usr/bin/{hmaptool,modularize,scan-build,scan-build-py,scan-view,analyze-build,intercept-build}
+    _fakeinstall fakeinstall/usr/bin/pp-trace
+
+    _fakeinstall fakeinstall/usr/include/clang*
+
+    _fakeinstall fakeinstall/usr/lib/clang
+    _fakeinstall fakeinstall/usr/lib/libclang*
+    _fakeinstall fakeinstall/usr/lib/libfindAllSymbols*
+    _fakeinstall fakeinstall/usr/lib/cmake/clang
+
+    _fakeinstall fakeinstall/usr/libexec
+    _fakeinstall fakeinstall/usr/share/doc/clang*
+    _fakeinstall fakeinstall/usr/share/clang
+    _fakeinstall fakeinstall/usr/share/scan{-build,-view}
+    _fakeinstall fakeinstall/usr/share/man/man1/{clang,diagtool,extraclangtools,scan-build}*
+
+    # Remove documentation sources
+    rm -rf "$pkgdir"/usr/share/doc/clang{,-tools}/html/{_sources,.buildinfo}
+
+    # Move scanbuild-py into site-packages and install Python bindings
+    local site_packages=$(python -c "import site; print(site.getsitepackages()[0])")
+    install -d "$pkgdir/$site_packages"
+    _fakeinstall fakeinstall/usr/lib/{libear,libscanbuild}
+    mv "$pkgdir"/usr/lib/{libear,libscanbuild} "$pkgdir/$site_packages/"
+    cp -a $srcdir/llvm-project/clang/bindings/python/clang "$pkgdir/$site_packages/"
+
+    # Move analyzer scripts out of /usr/libexec
+    mv "$pkgdir"/usr/libexec/* "$pkgdir/usr/lib/clang/"
+    rmdir "$pkgdir/usr/libexec"
+    sed -i 's|libexec|lib/clang|' \
+    "$pkgdir/usr/bin/scan-build" \
+    "$pkgdir/$site_packages/libscanbuild/analyze.py"
+
+    # Compile Python scripts
+#    _python_optimize "$pkgdir/usr/share" "$pkgdir/$site_packages"
+    #optimize other python files except 2 problem cases
+    _python_optimize "$pkgdir"/usr/share -x 'clang-include-fixer|run-find-all-symbols'
+
+    install -Dm644 "$srcdir"/llvm-project/llvm/LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+
+package_llvm-libs() {
+    pkgdesc="LLVM runtime libraries"
+    depends=('gcc-libs' 'zlib' 'libffi' 'libedit' 'ncurses' 'libxml2')
+    options=('!debug')
+    _fakeinstall fakeinstall/usr/lib/libLLVM-*.so*
+    _fakeinstall fakeinstall/usr/lib/libLTO.so*
+    _fakeinstall fakeinstall/usr/lib/libRemarks.so.*
+    _fakeinstall fakeinstall/usr/lib/LLVMgold.so
+    install -d "$pkgdir/usr/lib/bfd-plugins"
+    ln -s ../LLVMgold.so "$pkgdir/usr/lib/bfd-plugins/LLVMgold.so"
+
+    install -Dm644 "$srcdir"/llvm-project/llvm/LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+
+package_llvm() {
+    pkgdesc="Compiler infrastructure"
+    depends=('llvm-libs' 'perl')
+    options=('!debug')
+    _fakeinstall fakeinstall/usr/bin
+    _fakeinstall fakeinstall/usr/include/llvm*
+    _fakeinstall fakeinstall/usr/lib
+    _fakeinstall fakeinstall/usr/share
+
+    # Include lit for running lit-based tests in other projects
+    pushd "$srcdir"/llvm-project/llvm/utils/lit
+    python3 setup.py install --root="$pkgdir" -O1
+    popd
+
+    cp "$pkgdir"/usr/bin/lit "$pkgdir"/usr/bin/llvm-lit
+    # Remove documentation sources
+    rm -rf "$pkgdir"/usr/share/doc/llvm/html/{_sources,.buildinfo}
+    # Remove libs which conflict with llvm-libs
+    rm -f "$pkgdir"/usr/lib/{libLLVM,libLTO,LLVMgold,libRemarks}.so
+    rm -f "$pkgdir"/usr/lib/python3.8/site-packages/six.py
+
+        # Needed for multilib (https://bugs.archlinux.org/task/29951)
+        # Header stub is taken from Fedora
+        mv "$pkgdir/usr/include/llvm/Config/llvm-config"{,-64}.h
+        cp "$srcdir/llvm-config.h" "$pkgdir/usr/include/llvm/Config/llvm-config.h"
+
+    install -Dm644 "$srcdir"/llvm-project/llvm/LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

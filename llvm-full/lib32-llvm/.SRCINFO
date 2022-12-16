@@ -1,0 +1,45 @@
+pkgbase = lib32-llvm
+	pkgdesc = Low Level Virtual Machine
+	pkgver = 15.0.6
+	pkgrel = 2
+	url = https://llvm.org/
+	arch = x86_64
+	license = custom:Apache 2.0 with LLVM Exception
+	makedepends = git
+	makedepends = cmake
+	makedepends = ninja
+	makedepends = python
+	makedepends = lib32-gcc-libs
+	makedepends = lib32-libffi
+	makedepends = lib32-libunwind
+	makedepends = lib32-libxml2
+	makedepends = lib32-zlib
+	makedepends = lib32-zstd
+	options = staticlibs
+	source = llvm-project::git+https://github.com/llvm/llvm-project.git#commit=088f33605d8a61ff519c580a71b1dd57d16a03f8
+	md5sums = SKIP
+	sha512sums = SKIP
+
+pkgname = lib32-llvm-libs
+	pkgdesc = Low Level Virtual Machine library (runtime library)(32-bit)
+	depends = lib32-libffi
+	depends = lib32-zlib
+	depends = lib32-libxml2
+	depends = lib32-gcc-libs
+	depends = lib32-zstd
+	provides = lib32-llvm-libs=15.0.6
+
+pkgname = lib32-clang
+	pkgdesc = C language family frontend for LLVM (32-bit)
+	depends = lib32-llvm-libs=15.0.6
+	depends = lib32-gcc-libs
+	depends = gcc-multilib
+	optdepends = python: needed for hwsan_symbolize
+	provides = lib32-clang=15.0.6
+
+pkgname = lib32-llvm
+	pkgdesc = Low Level Virtual Machine (32-bit)
+	depends = lib32-llvm-libs=15.0.6
+	depends = llvm
+	depends = lib32-gcc-libs
+	provides = lib32-llvm=15.0.6

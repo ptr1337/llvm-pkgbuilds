@@ -1,0 +1,73 @@
+From a8747c147e8937abb64d89c668844ab4f47fba81 Mon Sep 17 00:00:00 2001
+From: serge-sans-paille <sguelton@redhat.com>
+Date: Tue, 20 Sep 2022 14:45:11 +0200
+Subject: [PATCH 2/3] [BOLT] Fix (part of) dylib compatibility
+
+Non-LLVM components should not be listed as part of LLVM_LINK_COMPONENTS.
+
+Differential Revision: https://reviews.llvm.org/D134278
+---
+ bolt/lib/Target/AArch64/CMakeLists.txt     | 3 ++-
+ bolt/lib/Target/X86/CMakeLists.txt         | 4 ++--
+ bolt/tools/llvm-bolt-fuzzer/CMakeLists.txt | 5 ++++-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/bolt/lib/Target/AArch64/CMakeLists.txt b/bolt/lib/Target/AArch64/CMakeLists.txt
+index 96c70168196e..29753969e85e 100644
+--- a/bolt/lib/Target/AArch64/CMakeLists.txt
++++ b/bolt/lib/Target/AArch64/CMakeLists.txt
+@@ -1,5 +1,4 @@
+ set(LLVM_LINK_COMPONENTS
+-  BOLTCore
+   MC
+   Support
+   AArch64Desc
+@@ -12,6 +11,8 @@ add_llvm_library(LLVMBOLTTargetAArch64
+   AArch64CommonTableGen
+   )
+ 
++target_link_libraries(LLVMBOLTTargetAArch64 PRIVATE LLVMBOLTCore)
++
+ include_directories(
+   ${LLVM_MAIN_SRC_DIR}/lib/Target/AArch64
+   ${LLVM_BINARY_DIR}/lib/Target/AArch64
+diff --git a/bolt/lib/Target/X86/CMakeLists.txt b/bolt/lib/Target/X86/CMakeLists.txt
+index 47344fe33111..7be9f80006c6 100644
+--- a/bolt/lib/Target/X86/CMakeLists.txt
++++ b/bolt/lib/Target/X86/CMakeLists.txt
+@@ -1,6 +1,4 @@
+ set(LLVM_LINK_COMPONENTS
+-  BOLTCore
+-  BOLTUtils
+   MC
+   MCDisassembler
+   Support
+@@ -15,6 +13,8 @@ add_llvm_library(LLVMBOLTTargetX86
+   X86CommonTableGen
+   )
+ 
++target_link_libraries(LLVMBOLTTargetX86 PRIVATE LLVMBOLTCore LLVMBOLTUtils)
++
+ include_directories(
+   ${LLVM_MAIN_SRC_DIR}/lib/Target/X86
+   ${LLVM_BINARY_DIR}/lib/Target/X86
+diff --git a/bolt/tools/llvm-bolt-fuzzer/CMakeLists.txt b/bolt/tools/llvm-bolt-fuzzer/CMakeLists.txt
+index 14031ca41925..f84a841a163d 100644
+--- a/bolt/tools/llvm-bolt-fuzzer/CMakeLists.txt
++++ b/bolt/tools/llvm-bolt-fuzzer/CMakeLists.txt
+@@ -1,8 +1,11 @@
+ set(LLVM_LINK_COMPONENTS
+-  BOLTRewrite
+   ${LLVM_TARGETS_TO_BUILD}
+   )
+ 
+ add_llvm_fuzzer(llvm-bolt-fuzzer
+   llvm-bolt-fuzzer.cpp
+   )
++
++if (TARGET llvm-bolt-fuzzer)
++    target_link_libraries(llvm-bolt-fuzzer PRIVATE LLVMBOLTRewrite)
++endif()
+-- 
+2.37.3
+
