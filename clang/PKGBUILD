@@ -69,8 +69,6 @@ prepare() {
 
 build() {
   cd clang-$pkgver.src/build
-export CC=clang
-export CXX=clang++
   local cmake_args=(
     -G Ninja
     -DCMAKE_BUILD_TYPE=Release
