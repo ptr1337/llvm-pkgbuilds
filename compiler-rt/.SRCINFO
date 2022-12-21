@@ -1,6 +1,6 @@
 pkgbase = compiler-rt
 	pkgdesc = Compiler runtime libraries for clang
-	pkgver = 15.0.5
+	pkgver = 15.0.6
 	pkgrel = 1
 	url = https://compiler-rt.llvm.org/
 	arch = x86_64
@@ -11,15 +11,10 @@ pkgbase = compiler-rt
 	makedepends = python
 	depends = gcc-libs
 	options = staticlibs
-	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.5/compiler-rt-15.0.5.src.tar.xz
-	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.5/compiler-rt-15.0.5.src.tar.xz.sig
-	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.5/cmake-15.0.5.src.tar.xz
-	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.5/cmake-15.0.5.src.tar.xz.sig
-	validpgpkeys = 474E22316ABF4785A88C6E8EA2C794A986419D8A
-	sha256sums = d2a0680da5936f4187485682c28f17c98aabcd5e402d75af9ce78c992adae2ee
-	sha256sums = SKIP
-	sha256sums = 61a9757f2fb7dd4c992522732531eb58b2bb031a2ca68848ff1cfda1fc07b7b3
-	sha256sums = SKIP
+	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/compiler-rt-15.0.6.src.tar.xz
+	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/cmake-15.0.6.src.tar.xz
+	sha256sums = b46f5b5b02402ef3acd92e7adf2d551e0b2a8ed19fce66800472dc0ad2a81fbc
+	sha256sums = 7613aeeaba9b8b12b35224044bc349b5fa45525919625057fa54dc882dcb4c86
 	makedepends_x86_64 = lib32-gcc-libs
 
 pkgname = compiler-rt

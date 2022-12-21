@@ -11,15 +11,12 @@ license=('custom:Apache 2.0 with LLVM Exception')
 depends=('lib32-llvm-libs' 'gcc-multilib')
 makedepends=('lib32-llvm' 'cmake' 'ninja' 'python')
 _source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver
-source=($_source_base/clang-$pkgver.src.tar.xz{,.sig}
-        $_source_base/llvm-$pkgver.src.tar.xz{,.sig}
+source=($_source_base/clang-$pkgver.src.tar.xz
+        $_source_base/llvm-$pkgver.src.tar.xz
         enable-fstack-protector-strong-by-default.patch)
-sha256sums=('3737d1d81253bc7608443661ac616bdc06f8833d313f4c3e22ed0eecc55b1238'
-            'SKIP'
-            '4428688b567ab1c9911aa9e13cb44c9bc1b14431713c14de491e10369f2b0370'
-            'SKIP'
+sha256sums=('10119ae195f1b4f979fe42e67b781e175b0c0d4e982fd6a2f44c4aa7fc925233'
+            '0b32199401f27e2e0353846a8c5fbadd77beca2570654fb9ef7ac9b7f26967e3'
             '7a9ce949579a3b02d4b91b6835c4fb45adc5f743007572fb0e28e6433e48f3a5')
-validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A') # Tom Stellard <tstellar@redhat.com>
 
 # Utilizing LLVM_DISTRIBUTION_COMPONENTS to avoid
 # installing static libraries; inspired by Gentoo

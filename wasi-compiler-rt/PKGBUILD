@@ -9,19 +9,15 @@ url='https://compiler-rt.llvm.org/'
 license=('custom:Apache 2.0 with LLVM Exception')
 depends=('wasi-libc')
 makedepends=('cmake' 'ninja' 'llvm' 'clang' 'lld')
-source=("https://github.com/llvm/llvm-project/releases/download/llvmorg-${pkgver}/compiler-rt-${pkgver}.src.tar.xz"{,.sig}
-"https://github.com/llvm/llvm-project/releases/download/llvmorg-${pkgver}/cmake-${pkgver}.src.tar.xz"{,.sig}
-
+source=("https://github.com/llvm/llvm-project/releases/download/llvmorg-${pkgver}/compiler-rt-${pkgver}.src.tar.xz"
+		"https://github.com/llvm/llvm-project/releases/download/llvmorg-${pkgver}/cmake-${pkgver}.src.tar.xz"
         WASI.cmake
         wasi-toolchain.cmake)
-b2sums=('267771cee3d6e66cee229314fde4bce14cfab4aeb8e578f6a52bf3b480fc081811f8ea717511abbdd5862c8a5d79dbec07aaf53a371a90500fce0d0e9078de74'
-        'SKIP'
-        '44702077da62fb1b5bb92a4c95b8a74fcdd6acd99905c2348ff9c4ec38d3d12e2ef649b1dfe28f03b1512d65b1ac9bbae51c308b8b8e7ee779d073add9fc4d68'
-        'SKIP'
+b2sums=('e909ba7e0651c759b8cdfa0dddb3fbbf47ba77a7296d05aa9883dded1186ab6ed3101628cd34ad31b80a12815ecb3f04a780dbe07e2e43a5c3af303c7ae5798b'
+        '07cde9b8ea7c5e4726f094841a295351796798e033bf4d9a6dbddd128fa99cf3234baab5a5c94adb8de80ca537905626081e3e23cab8d547856f6534ca481a9d'
         'c829d807c257921fddb8c4d3752ad2291a2beb116d414dd31e34b7f6b01599d8c4807db87ef9930456ed8c9f30e8648e77028fa0b903c3a5ea840514f6022cf4'
         '74c63bb838bc2e6d7980370fb3d47f8fd2f1dd8b6dc82302c7cc0b80e0fb1e8e21c1c62d6de0b78e478fc22611a5867e52b1ef7a566796fe831fffd98b17c940')
 options=('staticlibs' '!lto')
-validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A') # Tom Stellard <tstellar@redhat.com>
 
 prepare() {
   # Platform files have been copied from here https://github.com/WebAssembly/wasi-sdk

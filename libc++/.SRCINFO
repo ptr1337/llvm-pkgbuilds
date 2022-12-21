@@ -1,5 +1,5 @@
 pkgbase = libc++
-	pkgver = 15.0.5
+	pkgver = 15.0.6
 	pkgrel = 1
 	url = https://libcxx.llvm.org/
 	arch = x86_64
@@ -11,15 +11,12 @@ pkgbase = libc++
 	makedepends = python
 	depends = gcc-libs
 	options = !lto
-	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.5/llvm-project-15.0.5.src.tar.xz
-	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.5/llvm-project-15.0.5.src.tar.xz.sig
-	validpgpkeys = 474E22316ABF4785A88C6E8EA2C794A986419D8A
-	sha512sums = cf2a89ebb6bc9d7e3f1fd09531c84ac9927cdbe5ee13a6fcb8ce4d08e5a9d6d480ad982f62126b9c757beafa283b34f2ba1fbc56223c641e70da2be4627f59a6
-	sha512sums = SKIP
+	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/llvm-project-15.0.6.src.tar.xz
+	sha512sums = 3311d85f4e02610af52f06e83c8c6d2b93950d24324b831b7afc47c39a20a546d39683a14e1a315da87d226379042de900a3f36a0351053547482af9035ab949
 
 pkgname = libc++
 	pkgdesc = LLVM C++ standard library.
-	depends = libc++abi=15.0.5-1
+	depends = libc++abi=15.0.6-1
 	options = staticlibs
 
 pkgname = libc++abi

@@ -12,16 +12,12 @@ depends=('llvm-libs')
 makedepends=('llvm' 'cmake' 'ninja' 'python-sphinx')
 options=('!lto') # LTO causes a couple of test failures
 _source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver
-source=($_source_base/lld-$pkgver.src.tar.xz{,.sig}
-        $_source_base/llvm-$pkgver.src.tar.xz{,.sig}
-        $_source_base/libunwind-$pkgver.src.tar.xz{,.sig})
-sha256sums=('55241cb1ccc9cb3a8006373c58a8071990973ebfa67ed9b508a125492f4c005e'
-            'SKIP'
-            '4428688b567ab1c9911aa9e13cb44c9bc1b14431713c14de491e10369f2b0370'
-            'SKIP'
-            'a1616b6114af17a50dd85139dc8d54c347cffc0ec998acc809c8be8d1edab0d3'
-            'SKIP')
-validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A') # Tom Stellard <tstellar@redhat.com>
+source=($_source_base/lld-$pkgver.src.tar.xz
+        $_source_base/llvm-$pkgver.src.tar.xz
+        $_source_base/libunwind-$pkgver.src.tar.xz)
+sha256sums=('29fd83b61a1171c6bd51963ca54d0d7b577255e77fcd5ff03c0548fcc5b27b4f'
+            '0b32199401f27e2e0353846a8c5fbadd77beca2570654fb9ef7ac9b7f26967e3'
+            '020a5a0d5be26ad7a034878479f292718ad27295c843050a9be6116abc520a28')
 
 prepare() {
   # https://bugs.llvm.org/show_bug.cgi?id=49228
