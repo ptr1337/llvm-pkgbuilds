@@ -11,7 +11,7 @@ license=('custom:Apache 2.0 with LLVM Exception')
 makedepends=('git' 'cmake' 'ninja' 'libffi' 'libedit' 'ncurses' 'libxml2'
              'python-sphinx' 'lua53' 'clang' 'llvm' 'lld'
              'python-recommonmark' 'python-sphinx-automodapi' 'ocl-icd' 'opencl-headers' 'python-yaml' 'python-setuptools'
-             'swig' 'python' 'libunwind' 'mold')
+             'swig' 'python' 'libunwind' 'mold' 'python-six')
 source=("llvm-project::git+https://github.com/llvm/llvm-project.git#commit=088f33605d8a61ff519c580a71b1dd57d16a03f8"
         "llvm-config.h"
         "kCFI.patch"
