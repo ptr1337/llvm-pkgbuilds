@@ -2,7 +2,7 @@
 
 pkgname=openmp
 pkgver=15.0.6
-pkgrel=1
+pkgrel=4
 pkgdesc="LLVM OpenMP Runtime Library"
 arch=('x86_64')
 url="https://openmp.llvm.org/"

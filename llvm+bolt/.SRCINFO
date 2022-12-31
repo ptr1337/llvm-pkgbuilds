@@ -16,12 +16,16 @@ pkgbase = llvm
 	makedepends = python-recommonmark
 	options = staticlibs
 	options = !lto
-	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/llvm-15.0.6.src.tar.xz
-	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/cmake-15.0.6.src.tar.xz
+	source = git+https://github.com/llvm/llvm-project.git#commit=088f33605d8a61ff519c580a71b1dd57d16a03f8
 	source = llvm-config.h
-	sha256sums = 0b32199401f27e2e0353846a8c5fbadd77beca2570654fb9ef7ac9b7f26967e3
-	sha256sums = 7613aeeaba9b8b12b35224044bc349b5fa45525919625057fa54dc882dcb4c86
+	source = bolt.patch
+	source = bolt2.patch
+	source = bolt3.patch
+	sha256sums = SKIP
 	sha256sums = 597dc5968c695bbdbb0eac9e8eb5117fcd2773bc91edf5ec103ecffffab8bc48
+	sha256sums = 6c4b720cc306b7d457ca24dd31542170320897faba010af0fe4234c997116bc4
+	sha256sums = 519a0d1e11acb01097412449c845b09f48fbb866e96d7ae64e9eef4823306ebd
+	sha256sums = 84491cbed197a0e4121e15f28d91426db4b35bf91ddf159e80587089ff8d1d1e
 
 pkgname = llvm
 	pkgdesc = Compiler infrastructure

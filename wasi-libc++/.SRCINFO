@@ -1,6 +1,6 @@
 pkgbase = wasi-libc++
 	pkgver = 15.0.6
-	pkgrel = 1
+	pkgrel = 2
 	url = https://libcxx.llvm.org/
 	arch = any
 	license = custom:Apache 2.0 with LLVM Exception

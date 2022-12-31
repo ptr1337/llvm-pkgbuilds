@@ -1,7 +1,7 @@
 pkgbase = lld
 	pkgdesc = Linker from the LLVM project
 	pkgver = 15.0.6
-	pkgrel = 1
+	pkgrel = 4
 	url = https://lld.llvm.org/
 	arch = x86_64
 	license = custom:Apache 2.0 with LLVM Exception

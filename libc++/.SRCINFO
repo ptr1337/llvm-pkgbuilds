@@ -1,6 +1,6 @@
 pkgbase = libc++
 	pkgver = 15.0.6
-	pkgrel = 1
+	pkgrel = 2
 	url = https://libcxx.llvm.org/
 	arch = x86_64
 	license = custom:Apache 2.0 with LLVM Exception
@@ -16,7 +16,7 @@ pkgbase = libc++
 
 pkgname = libc++
 	pkgdesc = LLVM C++ standard library.
-	depends = libc++abi=15.0.6-1
+	depends = libc++abi=15.0.6-2
 	options = staticlibs
 
 pkgname = libc++abi

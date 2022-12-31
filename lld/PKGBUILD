@@ -3,7 +3,7 @@
 
 pkgname=lld
 pkgver=15.0.6
-pkgrel=1
+pkgrel=4
 pkgdesc="Linker from the LLVM project"
 arch=('x86_64')
 url="https://lld.llvm.org/"
@@ -29,8 +29,6 @@ prepare() {
 
 build() {
   cd lld-$pkgver.src/build
-export CC=clang
-export CXX=clang++
   local cmake_args=(
     -G Ninja
     -DCMAKE_BUILD_TYPE=Release

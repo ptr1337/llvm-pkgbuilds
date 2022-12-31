@@ -16,6 +16,7 @@ pkgbase = lib32-llvm
 	makedepends = lib32-zlib
 	makedepends = lib32-zstd
 	options = staticlibs
+	options = !lto
 	source = llvm-project::git+https://github.com/llvm/llvm-project.git#commit=088f33605d8a61ff519c580a71b1dd57d16a03f8
 	md5sums = SKIP
 	sha512sums = SKIP

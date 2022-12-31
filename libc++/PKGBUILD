@@ -6,7 +6,7 @@
 pkgbase=libc++
 pkgname=(libc++ libc++abi)
 pkgver=15.0.6
-pkgrel=1
+pkgrel=2
 url="https://libcxx.llvm.org/"
 license=('custom:Apache 2.0 with LLVM Exception')
 arch=('x86_64')
@@ -34,7 +34,7 @@ build() {
     -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
     -DLLVM_EXTERNAL_LIT=/usr/bin/lit \
     ../llvm-project-$pkgver.src/runtimes
-  ninja cxx cxxabi cxx_experimental
+  ninja cxx cxxabi
 }
 
 check() {
