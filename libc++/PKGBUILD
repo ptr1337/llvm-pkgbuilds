@@ -4,9 +4,9 @@
 # Contributor: MThinkCpp <mtc [dot] maintainer [at] outlook [dot] com>
 
 pkgbase=libc++
-pkgname=(libc++ libc++abi)
-pkgver=15.0.6
-pkgrel=2
+pkgname=(libc++ libc++abi libc++experimental)
+pkgver=14.0.6
+pkgrel=6
 url="https://libcxx.llvm.org/"
 license=('custom:Apache 2.0 with LLVM Exception')
 arch=('x86_64')
@@ -14,8 +14,10 @@ depends=('gcc-libs')
 makedepends=('clang' 'cmake' 'ninja' 'python')
 checkdepends=('llvm')
 options=(!lto)
-source=("https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver/llvm-project-$pkgver.src.tar.xz")
-sha512sums=('3311d85f4e02610af52f06e83c8c6d2b93950d24324b831b7afc47c39a20a546d39683a14e1a315da87d226379042de900a3f36a0351053547482af9035ab949')
+source=("https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver/llvm-project-$pkgver.src.tar.xz"{,.sig})
+sha512sums=('6fc6eeb60fac698702d1aac495fc0161eb7216a1f8db2020af8fccec5837831f7cc20dc2a169bf4f0b5f520748280b4a86621f3697d622aa58faaa45dbfaad13'
+            'SKIP')
+validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A') # Tom Stellard <tstellar@redhat.com>
  
 prepare() {
   mkdir -p build
@@ -33,8 +35,9 @@ build() {
     -DCMAKE_CXX_COMPILER=clang++ \
     -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
     -DLLVM_EXTERNAL_LIT=/usr/bin/lit \
+    -DLIBCXX_INSTALL_EXPERIMENTAL_LIBRARY=NO \
     ../llvm-project-$pkgver.src/runtimes
-  ninja cxx cxxabi
+  ninja cxx cxxabi cxx_experimental
 }
 
 check() {
@@ -61,4 +64,13 @@ package_libc++abi() {
   DESTDIR="$pkgdir" ninja -C build install-cxxabi
   install -Dm0644 llvm-project-$pkgver.src/libcxxabi/CREDITS.TXT "$pkgdir"/usr/share/licenses/"$pkgname"/CREDITS
   install -Dm0644 llvm-project-$pkgver.src/libcxxabi/LICENSE.TXT "$pkgdir"/usr/share/licenses/"$pkgname"/LICENSE
+}
+ 
+package_libc++experimental() {
+  depends=("libc++=$pkgver-$pkgrel")
+  pkgdesc='LLVM C++ experimental library.'
+  
+  install -Dm0644 -t "$pkgdir"/usr/lib/ build/lib/libc++experimental.a
+  install -Dm0644 llvm-project-$pkgver.src/libcxx/CREDITS.TXT "$pkgdir"/usr/share/licenses/"$pkgname"/CREDITS
+  install -Dm0644 llvm-project-$pkgver.src/libcxx/LICENSE.TXT "$pkgdir"/usr/share/licenses/"$pkgname"/LICENSE
 }
