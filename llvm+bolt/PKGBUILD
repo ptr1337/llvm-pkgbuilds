@@ -2,7 +2,7 @@
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
 pkgname=('llvm' 'llvm-libs')
-pkgver=15.0.6
+pkgver=15.0.7
 pkgrel=4
 arch=('x86_64')
 url="https://llvm.org/"

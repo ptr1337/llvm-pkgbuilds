@@ -6,7 +6,7 @@
 pkgbase=libc++
 pkgname=(libc++ libc++abi libc++experimental)
 pkgver=14.0.6
-pkgrel=6
+pkgrel=2
 url="https://libcxx.llvm.org/"
 license=('custom:Apache 2.0 with LLVM Exception')
 arch=('x86_64')
