@@ -1,8 +1,9 @@
 # Maintainer: Evangelos Foutras <evangelos@foutrelis.com>
 
 pkgname=openmp
-pkgver=15.0.7
-pkgrel=2
+pkgver=16.0.0rc2
+_pkgver=16.0.0-rc2
+pkgrel=1
 pkgdesc="LLVM OpenMP Runtime Library"
 arch=('x86_64')
 url="https://openmp.llvm.org/"
@@ -10,18 +11,22 @@ license=('custom:Apache 2.0 with LLVM Exception')
 depends=('llvm-libs' 'libelf' 'libffi')
 makedepends=('llvm' 'clang' 'cmake' 'ninja')
 options=('!lto') # https://bugzilla.redhat.com/show_bug.cgi?id=1988155
-_source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver
+_source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$_pkgver
 source=($_source_base/openmp-$pkgver.src.tar.xz{,.sig}
-        $_source_base/cmake-$pkgver.src.tar.xz{,.sig})
-sha256sums=('3f168d38e7a37b928dcb94b33ce947f75d81eef6fa6a4f9d16b6dc5511c07358'
+        $_source_base/cmake-$pkgver.src.tar.xz{,.sig}
+        $_source_base/third-party-$pkgver.src.tar.xz{,.sig})
+sha256sums=('bce0ec2904b4f33d411004489b07c02c59f70401b9bf5d7593982b9e7485294a'
             'SKIP'
-            '8986f29b634fdaa9862eedda78513969fe9788301c9f2d938f4c10a3e7a3e7ea'
+            'c95907dd1e10197b851f7e6a6b3dbd831bea96ea25b376d340ad7ad94b3a53a0'
+            'SKIP'
+            '939686f0c8fee1a50ef34c8ec0070af1139e14c69f7a5390dc2e95e8e32c8e34'
             'SKIP')
 validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A'  # Tom Stellard <tstellar@redhat.com>
               'D574BD5D1D0E98895E3BF90044F2485E45D59042') # Tobias Hieta <tobias@hieta.se>
 
 prepare() {
   mv cmake{-$pkgver.src,}
+  mv third-party{-$pkgver.src,}
   cd openmp-$pkgver.src
   mkdir build
 }

@@ -1,47 +1,41 @@
 # Maintainer: Evangelos Foutras <evangelos@foutrelis.com>
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
-pkgname=lld
-pkgver=16.0.0rc2
-_pkgver=16.0.0-rc2
+pkgname=llvm-bolt
+pkgver=16.0.0rc3
+_pkgver=16.0.0-rc3
 pkgrel=1
-pkgdesc="Linker from the LLVM project"
+pkgdesc="Post Link Optimizer from LLVM"
 arch=('x86_64')
-url="https://lld.llvm.org/"
+url="https://llvm-bolt.llvm.org/"
 license=('custom:Apache 2.0 with LLVM Exception')
 depends=('llvm-libs')
 makedepends=('llvm' 'cmake' 'ninja' 'python-sphinx')
 options=('!lto') # LTO causes a couple of test failures
 _source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$_pkgver
-source=($_source_base/lld-$pkgver.src.tar.xz{,.sig}
+source=($_source_base/bolt-$pkgver.src.tar.xz{,.sig}
         $_source_base/llvm-$pkgver.src.tar.xz{,.sig}
-        $_source_base/libunwind-$pkgver.src.tar.xz{,.sig}
         $_source_base/cmake-$pkgver.src.tar.xz{,.sig}
         $_source_base/third-party-$pkgver.src.tar.xz{,.sig})
-sha256sums=('5b75ebadcd23fa8e72639dc56401982e81e9fa42e044db46080241979e99dc53'
+sha256sums=('dba5c70c3fe88b3a38b9180df82fbc9d1dfd55d68f41fddd6a90f9e17f8e5df9'
             'SKIP'
-            '77d8b0186c54269c5e8dcd46840025d1fc7c89d6cbf6d3969edfcf402a3d7412'
+            '4ad8b2cc8003c86d0078d15d987d84e3a739f24aae9033865c027abae93ee7a4'
             'SKIP'
-            'ad4e1360dc5ee578895a2e7d4fed888619472438c848b8a3ba5ece03a900cebd'
+            '406d199ae3a16add84017f40458a5e7c31f9412937fcb518715af0a0eeafbc0c'
             'SKIP'
-            'c95907dd1e10197b851f7e6a6b3dbd831bea96ea25b376d340ad7ad94b3a53a0'
-            'SKIP'
-            '939686f0c8fee1a50ef34c8ec0070af1139e14c69f7a5390dc2e95e8e32c8e34'
+            '8986f29b634fdaa9862eedda78513969fe9788301c9f2d938f4c10a3e7a3e7ea'
             'SKIP')
-validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A'  # Tom Stellard <tstellar@redhat.com>
-              'D574BD5D1D0E98895E3BF90044F2485E45D59042') # Tobias Hieta <tobias@hieta.se>
 
 prepare() {
   # https://bugs.llvm.org/show_bug.cgi?id=49228
-  mv libunwind{-$pkgver.src,}
   mv cmake{-$pkgver.src,}
-  
-  cd lld-$pkgver.src
+  mv third-party{-$pkgver.src,}
+  cd bolt-$pkgver.src
   mkdir build
 }
 
 build() {
-  cd lld-$pkgver.src/build
+  cd bolt-$pkgver.src/build
 
   local cmake_args=(
     -G Ninja
@@ -62,21 +56,21 @@ build() {
 }
 
 check() {
-  cd lld-$pkgver.src/build
-  ninja check-lld
+  cd bolt-$pkgver.src/build
+  ninja check-bolt
 }
 
 package() {
-  cd lld-$pkgver.src/build
+  cd bolt-$pkgver.src/build
 
   DESTDIR="$pkgdir" ninja install
   install -Dm644 ../LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 
   # https://bugs.llvm.org/show_bug.cgi?id=42455
-  install -Dm644 -t "$pkgdir/usr/share/man/man1" ../docs/ld.lld.1
+  install -Dm644 -t "$pkgdir/usr/share/man/man1" ../docs/llvm-bolt.1
 
   # Remove documentation sources
-  rm -r "$pkgdir"/usr/share/doc/lld/html/{_sources,.buildinfo}
+  rm -r "$pkgdir"/usr/share/doc/llvm-bolt/html/{_sources,.buildinfo}
 }
 
 # vim:set ts=2 sw=2 et:
