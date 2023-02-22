@@ -1,8 +1,8 @@
 # Maintainer: Laurent Carlier <lordheavym@gmail.com>
 
 pkgname=libclc
-pkgver=16.0.0rc2
-_pkgver=16.0.0-rc2
+pkgver=16.0.0rc3
+_pkgver=16.0.0-rc3
 pkgrel=1
 pkgdesc="Library requirements of the OpenCL C programming language"
 arch=('any')

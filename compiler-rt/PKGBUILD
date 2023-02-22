@@ -2,8 +2,8 @@
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
 pkgname=compiler-rt
-pkgver=16.0.0rc2
-_pkgver=16.0.0-rc2
+pkgver=16.0.0rc3
+_pkgver=16.0.0-rc3
 pkgrel=1
 pkgdesc="Compiler runtime libraries for clang"
 arch=('x86_64')
@@ -18,11 +18,11 @@ _source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$_pk
 source=($_source_base/compiler-rt-$pkgver.src.tar.xz{,.sig}
         $_source_base/cmake-$pkgver.src.tar.xz{,.sig}
         $_source_base/third-party-$pkgver.src.tar.xz{,.sig})
-sha256sums=('ede7c7e7e88160cafda1681290131da004417ba72b5801b9bafbb5e5517df794'
+sha256sums=('b16b013efeb659792cb78fc1e3ea677290e480a8992001a4bf15b54802a275d6'
             'SKIP'
-            'c95907dd1e10197b851f7e6a6b3dbd831bea96ea25b376d340ad7ad94b3a53a0'
+            '892b720979983735618137d19faaa6ac28500c1d7cdf7c0c4489f1ab0531f154'
             'SKIP'
-            '939686f0c8fee1a50ef34c8ec0070af1139e14c69f7a5390dc2e95e8e32c8e34'
+            'e56f362fded1d2f936620edacace4d07ee60b2912534b8821531b96da0d3489c'
             'SKIP')
 validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A'  # Tom Stellard <tstellar@redhat.com>
               'D574BD5D1D0E98895E3BF90044F2485E45D59042') # Tobias Hieta <tobias@hieta.se>

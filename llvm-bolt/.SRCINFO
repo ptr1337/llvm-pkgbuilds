@@ -1,5 +1,5 @@
 pkgbase = llvm-bolt
-	pkgdesc = Linker from the LLVM project
+	pkgdesc = Post Link Optimizer from LLVM
 	pkgver = 16.0.0rc3
 	pkgrel = 1
 	url = https://llvm-bolt.llvm.org/
@@ -19,8 +19,6 @@ pkgbase = llvm-bolt
 	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0-rc3/cmake-16.0.0rc3.src.tar.xz.sig
 	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0-rc3/third-party-16.0.0rc3.src.tar.xz
 	source = https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0-rc3/third-party-16.0.0rc3.src.tar.xz.sig
-	validpgpkeys = 474E22316ABF4785A88C6E8EA2C794A986419D8A
-	validpgpkeys = D574BD5D1D0E98895E3BF90044F2485E45D59042
 	sha256sums = dba5c70c3fe88b3a38b9180df82fbc9d1dfd55d68f41fddd6a90f9e17f8e5df9
 	sha256sums = SKIP
 	sha256sums = 4ad8b2cc8003c86d0078d15d987d84e3a739f24aae9033865c027abae93ee7a4
