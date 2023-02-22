@@ -17,25 +17,26 @@ source=($_source_base/bolt-$pkgver.src.tar.xz{,.sig}
         $_source_base/llvm-$pkgver.src.tar.xz{,.sig}
         $_source_base/cmake-$pkgver.src.tar.xz{,.sig}
         $_source_base/third-party-$pkgver.src.tar.xz{,.sig})
-sha256sums=('dba5c70c3fe88b3a38b9180df82fbc9d1dfd55d68f41fddd6a90f9e17f8e5df9'
+sha256sums=('f5a7ebf1cc2e1c1e5a686284afab392ed3c837f8bbe7e0fed9812ba711f4c7e4'
             'SKIP'
-            '4ad8b2cc8003c86d0078d15d987d84e3a739f24aae9033865c027abae93ee7a4'
+            '631eae5682409d890651fbb8d81580f703be45fecf2d67c1f9f07662ea5ab98b'
             'SKIP'
-            '406d199ae3a16add84017f40458a5e7c31f9412937fcb518715af0a0eeafbc0c'
+            '892b720979983735618137d19faaa6ac28500c1d7cdf7c0c4489f1ab0531f154'
             'SKIP'
-            '8986f29b634fdaa9862eedda78513969fe9788301c9f2d938f4c10a3e7a3e7ea'
+            'e56f362fded1d2f936620edacace4d07ee60b2912534b8821531b96da0d3489c'
             'SKIP')
 
 prepare() {
   # https://bugs.llvm.org/show_bug.cgi?id=49228
   mv cmake{-$pkgver.src,}
   mv third-party{-$pkgver.src,}
-  cd bolt-$pkgver.src
+  mv bolt{-$pkgver.src,}
+  cd llvm-$pkgver.src
   mkdir build
 }
 
 build() {
-  cd bolt-$pkgver.src/build
+  cd llvm-$pkgver.src/build
 
   local cmake_args=(
     -G Ninja
@@ -45,32 +46,33 @@ build() {
     -DCMAKE_SKIP_RPATH=ON
     -DLLVM_BUILD_DOCS=ON
     -DLLVM_ENABLE_SPHINX=ON
-    -DLLVM_EXTERNAL_LIT=/usr/bin/lit
+    -DLLVM_ENABLE_PROJECTS="bolt"
     -DLLVM_INCLUDE_TESTS=ON
     -DLLVM_LINK_LLVM_DYLIB=ON
-    -DLLVM_MAIN_SRC_DIR="$srcdir/llvm-$pkgver.src"
     -DSPHINX_WARNINGS_AS_ERRORS=OFF
   )
   cmake .. "${cmake_args[@]}"
-  ninja
+  ninja llvm-bolt
 }
 
 check() {
-  cd bolt-$pkgver.src/build
+  cd llvm-$pkgver.src/build
   ninja check-bolt
 }
 
 package() {
-  cd bolt-$pkgver.src/build
+  cd llvm-$pkgver.src/build
 
-  DESTDIR="$pkgdir" ninja install
+  DESTDIR="$pkgdir" ninja install-llvm-bolt install-perf2bolt install-merge-fdata \
+        install-llvm-boltdiff install-bolt_rt
   install -Dm644 ../LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 
   # https://bugs.llvm.org/show_bug.cgi?id=42455
-  install -Dm644 -t "$pkgdir/usr/share/man/man1" ../docs/llvm-bolt.1
+#  install -Dm644 -t "$pkgdir/usr/share/man/man1" ../docs/llvm-bolt.1
 
   # Remove documentation sources
-  rm -r "$pkgdir"/usr/share/doc/llvm-bolt/html/{_sources,.buildinfo}
+#  rm -r "$pkgdir"/usr/share/doc/llvm/html/{_sources,.buildinfo}
+    rm -rf "$pkgdir"/tmp
 }
 
 # vim:set ts=2 sw=2 et:

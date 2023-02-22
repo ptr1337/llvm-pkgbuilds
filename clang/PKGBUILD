@@ -17,7 +17,7 @@ optdepends=('openmp: OpenMP support in clang with -fopenmp'
 provides=("clang-analyzer=$pkgver" "clang-tools-extra=$pkgver")
 conflicts=('clang-analyzer' 'clang-tools-extra')
 replaces=('clang-analyzer' 'clang-tools-extra')
-options=('debug')
+options=('!lto')
 _source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$_pkgver
 source=($_source_base/clang-$pkgver.src.tar.xz{,.sig}
         $_source_base/clang-tools-extra-$pkgver.src.tar.xz{,.sig}
@@ -67,7 +67,7 @@ prepare() {
   cd clang-$pkgver.src
   mkdir build
   mv "$srcdir/clang-tools-extra-$pkgver.src" tools/extra
-  patch -Np2 -i ../enable-fstack-protector-strong-by-default.patch
+#  patch -Np2 -i ../enable-fstack-protector-strong-by-default.patch
 
   # Attempt to convert script to Python 3
   2to3 -wn --no-diffs \
