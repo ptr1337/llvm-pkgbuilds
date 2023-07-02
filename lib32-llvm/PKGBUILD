@@ -3,24 +3,21 @@
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
 pkgname=('lib32-llvm' 'lib32-llvm-libs')
-pkgver=16.0.0rc3
-_pkgver=16.0.0-rc3
-pkgrel=1
+pkgver=16.0.6
+pkgrel=2
 arch=('x86_64')
 url="https://llvm.org/"
 license=('custom:Apache 2.0 with LLVM Exception')
 makedepends=('cmake' 'ninja' 'lib32-libffi' 'lib32-zlib' 'lib32-zstd' 'python'
              'gcc-multilib' 'lib32-libxml2')
-options=('staticlibs' 'debug' '!lto') # extra/llvm has many test failures with LTO
-_source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$_pkgver
+options=('staticlibs' '!lto') # extra/llvm has many test failures with LTO
+_source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver
 source=($_source_base/llvm-$pkgver.src.tar.xz{,.sig}
         $_source_base/cmake-$pkgver.src.tar.xz{,.sig}
         $_source_base/third-party-$pkgver.src.tar.xz{,.sig})
-sha256sums=('631eae5682409d890651fbb8d81580f703be45fecf2d67c1f9f07662ea5ab98b'
+sha256sums=('4ad8b2cc8003c86d0078d15d987d84e3a739f24aae9033865c027abae93ee7a4'
             'SKIP'
-            '892b720979983735618137d19faaa6ac28500c1d7cdf7c0c4489f1ab0531f154'
-            'SKIP'
-            'e56f362fded1d2f936620edacace4d07ee60b2912534b8821531b96da0d3489c'
+            '8986f29b634fdaa9862eedda78513969fe9788301c9f2d938f4c10a3e7a3e7ea'
             'SKIP')
 validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A'  # Tom Stellard <tstellar@redhat.com>
               'D574BD5D1D0E98895E3BF90044F2485E45D59042') # Tobias Hieta <tobias@hieta.se>

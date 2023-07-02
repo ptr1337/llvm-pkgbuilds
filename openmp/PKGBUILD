@@ -1,25 +1,24 @@
 # Maintainer: Evangelos Foutras <evangelos@foutrelis.com>
 
 pkgname=openmp
-pkgver=16.0.0rc3
-_pkgver=16.0.0-rc3
-pkgrel=1
+pkgver=16.0.6
+pkgrel=2
 pkgdesc="LLVM OpenMP Runtime Library"
 arch=('x86_64')
 url="https://openmp.llvm.org/"
 license=('custom:Apache 2.0 with LLVM Exception')
 depends=('llvm-libs' 'libelf' 'libffi')
 makedepends=('llvm' 'clang' 'cmake' 'ninja')
+optdepends=('cuda: offloading to NVIDIA GPUs'
+            'hsa-rocr: offloading to AMD GPUs')
 options=('!lto') # https://bugzilla.redhat.com/show_bug.cgi?id=1988155
-_source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$_pkgver
+_source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver
 source=($_source_base/openmp-$pkgver.src.tar.xz{,.sig}
         $_source_base/cmake-$pkgver.src.tar.xz{,.sig}
         $_source_base/third-party-$pkgver.src.tar.xz{,.sig})
-sha256sums=('572c62b69a788c76796b99bd30ebbe0011e9871a27ff8fbe77174bec50b29e8d'
+sha256sums=('3f168d38e7a37b928dcb94b33ce947f75d81eef6fa6a4f9d16b6dc5511c07358'
             'SKIP'
-            '892b720979983735618137d19faaa6ac28500c1d7cdf7c0c4489f1ab0531f154'
-            'SKIP'
-            'e56f362fded1d2f936620edacace4d07ee60b2912534b8821531b96da0d3489c'
+            '8986f29b634fdaa9862eedda78513969fe9788301c9f2d938f4c10a3e7a3e7ea'
             'SKIP')
 validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A'  # Tom Stellard <tstellar@redhat.com>
               'D574BD5D1D0E98895E3BF90044F2485E45D59042') # Tobias Hieta <tobias@hieta.se>
