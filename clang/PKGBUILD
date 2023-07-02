@@ -2,9 +2,8 @@
 # Contributor: Jan "heftig" Steffens <jan.steffens@gmail.com>
 
 pkgname=clang
-pkgver=16.0.0rc3
-_pkgver=16.0.0-rc3
-pkgrel=1
+pkgver=16.0.6
+pkgrel=2
 pkgdesc="C language family frontend for LLVM"
 arch=('x86_64')
 url="https://clang.llvm.org/"
@@ -17,24 +16,26 @@ optdepends=('openmp: OpenMP support in clang with -fopenmp'
 provides=("clang-analyzer=$pkgver" "clang-tools-extra=$pkgver")
 conflicts=('clang-analyzer' 'clang-tools-extra')
 replaces=('clang-analyzer' 'clang-tools-extra')
-options=('!lto')
-_source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$_pkgver
+_source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver
 source=($_source_base/clang-$pkgver.src.tar.xz{,.sig}
         $_source_base/clang-tools-extra-$pkgver.src.tar.xz{,.sig}
         $_source_base/llvm-$pkgver.src.tar.xz{,.sig}
         $_source_base/cmake-$pkgver.src.tar.xz{,.sig}
-        $_source_base/third-party-$pkgver.src.tar.xz{,.sig}
-        enable-fstack-protector-strong-by-default.patch)
-sha256sums=('ee84e98286eff5f45320e41e5df6cec250acd1939587d69e0b721e30e09b9db6'
+        $pkgname-structured-bindings-r1.patch::https://github.com/llvm/llvm-project/commit/127bf4438542.patch
+        $pkgname-bitfield-value-capture.patch::https://github.com/llvm/llvm-project/commit/a1a71b7dc97b.patch
+        enable-fstack-protector-strong-by-default.patch
+        $_source_base/third-party-$pkgver.src.tar.xz{,.sig})
+sha256sums=('a6b673ef15377fb46062d164e8ddc4d05c348ff8968f015f7f4af03f51000067'
             'SKIP'
-            '6ea8434ab15a85fb1823299a5c6cbb4134943923fef25457291f08393bc6dfe5'
+            '809a2ef46d46be3b83ca389356404ac041fa6d8f5496cb02ec35d252afb64fd1'
             'SKIP'
-            '631eae5682409d890651fbb8d81580f703be45fecf2d67c1f9f07662ea5ab98b'
+            '4ad8b2cc8003c86d0078d15d987d84e3a739f24aae9033865c027abae93ee7a4'
             'SKIP'
-            '892b720979983735618137d19faaa6ac28500c1d7cdf7c0c4489f1ab0531f154'
+            '8986f29b634fdaa9862eedda78513969fe9788301c9f2d938f4c10a3e7a3e7ea'
             'SKIP'
-            'e56f362fded1d2f936620edacace4d07ee60b2912534b8821531b96da0d3489c'
-            'SKIP'
+            '640ac4858c68cc6d52226afe01a67ad017f95511636b631d826b791c5b11a47e'
+            '6092fa872e2a706de12d1efb0626a4e9ef9854014edc68edb5ebac2ad27e2d9f'
+            'd432e706fd99e7817ea0cbb02795918a781a11e4f5e6d304d53fffec9856b6f4'
             '7a9ce949579a3b02d4b91b6835c4fb45adc5f743007572fb0e28e6433e48f3a5')
 validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A'  # Tom Stellard <tstellar@redhat.com>
               'D574BD5D1D0E98895E3BF90044F2485E45D59042') # Tobias Hieta <tobias@hieta.se>
@@ -67,7 +68,7 @@ prepare() {
   cd clang-$pkgver.src
   mkdir build
   mv "$srcdir/clang-tools-extra-$pkgver.src" tools/extra
-#  patch -Np2 -i ../enable-fstack-protector-strong-by-default.patch
+  patch -Np2 -i ../enable-fstack-protector-strong-by-default.patch
 
   # Attempt to convert script to Python 3
   2to3 -wn --no-diffs \

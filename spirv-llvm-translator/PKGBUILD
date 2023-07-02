@@ -3,8 +3,8 @@
 
 _srcname=SPIRV-LLVM-Translator
 pkgname=${_srcname,,}
-pkgver=15.0.0
-pkgrel=2
+pkgver=15.0.0.r10+g78ad93b9
+pkgrel=1
 pkgdesc="Tool and a library for bi-directional translation between SPIR-V and LLVM IR"
 arch=(x86_64)
 url="https://github.com/KhronosGroup/SPIRV-LLVM-Translator"
@@ -13,7 +13,7 @@ depends=(llvm-libs spirv-tools)
 makedepends=(git cmake llvm spirv-headers)
 checkdepends=(python python-setuptools clang)
 # Current point in the used LLVM branch
-_commit=6b53fe69e60b555e40c77a5c2b8529a55a0db3e2
+_commit=42de1b449486edb0aa2b764e4f4f3771d3f1a4a3
 source=(git+${url}.git#commit=$_commit)
 sha256sums=('SKIP')
 
@@ -21,6 +21,11 @@ pkgver() {
   cd ${_srcname}
   git describe --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./;s/-/+/'
 }
+
+#prepare() {
+#  cd ${_srcname}
+#  patch -Np1 -i ../0001-Fix-standalone-builds-with-LLVM_LINK_LLVM_DYLIB-ON.patch
+#}
 
 build() {
   cmake -B build -S ${_srcname} \
