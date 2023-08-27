@@ -4,27 +4,55 @@
 
 pkgname=('lib32-llvm' 'lib32-llvm-libs')
 pkgver=16.0.6
-pkgrel=2
+pkgrel=1
 arch=('x86_64')
 url="https://llvm.org/"
 license=('custom:Apache 2.0 with LLVM Exception')
 makedepends=('cmake' 'ninja' 'lib32-libffi' 'lib32-zlib' 'lib32-zstd' 'python'
              'gcc-multilib' 'lib32-libxml2')
-options=('staticlibs' '!lto') # extra/llvm has many test failures with LTO
+options=('staticlibs' '!lto') # https://github.com/llvm/llvm-project/issues/57740
 _source_base=https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver
 source=($_source_base/llvm-$pkgver.src.tar.xz{,.sig}
         $_source_base/cmake-$pkgver.src.tar.xz{,.sig}
         $_source_base/third-party-$pkgver.src.tar.xz{,.sig})
-sha256sums=('4ad8b2cc8003c86d0078d15d987d84e3a739f24aae9033865c027abae93ee7a4'
+sha256sums=('e91db44d1b3bb1c33fcea9a7d1f2423b883eaa9163d3d56ca2aa6d2f0711bc29'
             'SKIP'
-            '8986f29b634fdaa9862eedda78513969fe9788301c9f2d938f4c10a3e7a3e7ea'
+            '39d342a4161095d2f28fb1253e4585978ac50521117da666e2b1f6f28b62f514'
+            'SKIP'
+            '15f5b9aeeba938530af977d5f9205612737a091a7f0f6c8075df8723b7713f70'
             'SKIP')
 validpgpkeys=('474E22316ABF4785A88C6E8EA2C794A986419D8A'  # Tom Stellard <tstellar@redhat.com>
               'D574BD5D1D0E98895E3BF90044F2485E45D59042') # Tobias Hieta <tobias@hieta.se>
 
+# Utilizing LLVM_DISTRIBUTION_COMPONENTS to avoid
+# installing static libraries; inspired by Gentoo
+_get_distribution_components() {
+  local target
+  ninja -t targets | grep -Po 'install-\K.*(?=-stripped:)' | while read -r target; do
+    case $target in
+      llvm-libraries|distribution)
+        continue
+        ;;
+      # shared libraries
+      LLVM|LLVMgold)
+        ;;
+      # libraries needed for clang-tblgen
+      LLVMDemangle|LLVMSupport|LLVMTableGen)
+        ;;
+      # exclude static libraries
+      LLVM*)
+        continue
+        ;;
+      # exclude llvm-exegesis (doesn't seem useful without libpfm)
+      llvm-exegesis)
+        continue
+        ;;
+    esac
+    echo $target
+  done
+}
 prepare() {
-  mv cmake{-$pkgver.src,}
-  mv third-party{-$pkgver.src,}
+  rename -v -- "-$pkgver.src" '' {cmake,third-party}-$pkgver.src
   cd llvm-$pkgver.src
   mkdir build
 }
@@ -60,6 +88,12 @@ build() {
     -DLLVM_TARGET_ARCH:STRING=i686
     -DLLVM_USE_PERF=ON
   )
+
+  cmake .. "${cmake_args[@]}"
+  local distribution_components=$(_get_distribution_components | paste -sd\;)
+  test -n "$distribution_components"
+  cmake_args+=(-DLLVM_DISTRIBUTION_COMPONENTS="$distribution_components")
+
   cmake .. "${cmake_args[@]}"
   ninja
 }
@@ -70,7 +104,7 @@ package_lib32-llvm() {
 
   cd llvm-$pkgver.src/build
 
-  DESTDIR="$pkgdir" ninja install
+  DESTDIR="$pkgdir" ninja install-distribution
 
   # The runtime library goes into lib32-llvm-libs
   mv "$pkgdir"/usr/lib32/lib{LLVM,LTO,Remarks}*.so* "$srcdir"
@@ -80,15 +114,8 @@ package_lib32-llvm() {
   chmod -x "$pkgdir"/usr/lib32/*.a
 
   mv "$pkgdir/usr/bin/llvm-config" "$pkgdir/usr/lib32/llvm-config"
-  mv "$pkgdir/usr/include/llvm/Config/llvm-config.h" \
-    "$pkgdir/usr/lib32/llvm-config-32.h"
 
   rm -rf "$pkgdir"/usr/{bin,include,share/{doc,man,llvm,opt-viewer}}
-
-  # Needed for multilib (https://bugs.archlinux.org/task/29951)
-  # Header stub is taken from Fedora
-  install -d "$pkgdir/usr/include/llvm/Config"
-  mv "$pkgdir/usr/lib32/llvm-config-32.h" "$pkgdir/usr/include/llvm/Config/"
 
   mkdir "$pkgdir"/usr/bin
   mv "$pkgdir/usr/lib32/llvm-config" "$pkgdir/usr/bin/llvm-config32"

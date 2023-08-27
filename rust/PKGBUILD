@@ -13,8 +13,8 @@ pkgname=(
   rust-src
 )
 epoch=1
-pkgver=1.70.0
-pkgrel=2
+pkgver=1.72.0
+pkgrel=1
 pkgdesc="Systems programming language focused on safety, speed and concurrency"
 url=https://www.rust-lang.org/
 arch=(x86_64)
@@ -45,7 +45,7 @@ makedepends=(
   ninja
   perl
   python
-  rustup
+  rust
   wasi-libc
 )
 checkdepends=(
@@ -56,38 +56,37 @@ source=(
   "https://static.rust-lang.org/dist/rustc-$pkgver-src.tar.gz"{,.asc}
   0001-cargo-Change-libexec-dir.patch
   0001-bootstrap-Change-libexec-dir.patch
-  0002-compiler-Change-LLVM-targets.patch
-  0003-compiler-Use-wasm-ld-for-wasm-targets.patch
+  0002-bootstrap-Change-bash-completion-dir.patch
+  0003-compiler-Change-LLVM-targets.patch
+  0004-compiler-Use-wasm-ld-for-wasm-targets.patch
 )
-b2sums=('5b1fd44eaa10bf2ab76f64a3bb5c20ee4008031d05a49b0a32b3a9cb2e97d5684cf0c9a6b6883089afca6cab7a37a0a9cfa06d928ed3e6a3b6484b605e18a0f3'
+b2sums=('cb0b20523154da26ce2e8cd2e214c3e3c62a66dcf15f1615c92c2efcf3cfc2a437e8b7d582f05cc123e0450ae924aef9c28884b2579c589f9e4336f6bc1b6e70'
         'SKIP'
-        '513c6036982d114e1e1557c908b1c75e5fbb658a6e998fbcf2910e0a0673688ee28aaef4cf1c4c862d6c01bf6f551d7df2f8ba5989c2a81e88214d38f947fa28'
-        '6af87e4e772f69e9b68b464c0672f2d4b535063d1e5bedce8d269c71aebc6b1fa70f7fb9f10ddbc6347eb4d34de66ad0f10d1dfff08afdb7ec226a1de967fccd'
-        'fbe585ffc6b2202072bb936782f27494aa49938d12e7deb31ffa8f27af792577a71a11f0dfe0d884edaf94b738fb9e738d269b07f4b7afa24ed2ae05404086ad'
-        '141fe38a95f337a76ce04f780870ff686e3f224860ea7348ec968e889880952cbc4eb34baf51f9ac29255a30c20235472611374f2699e838389ad335d7f42d1c')
+        'c4bf40d48fd7ccb02c73fc02d5d968cfda80d1fd85c1ade4781d174bb4cb165b52998af4bf9495f2c04b0a25b147c13a5f3de4281d621353c9e799a67297a3fe'
+        '0b079767043116d1e2c30ce66e82972266bc46a70b54884c0d41786c7f4271fdacb04611d34d4106a394db9df4b384b0138fa4f52c3076bfb3932d410f668b15'
+        'f165abb36f03bb1ddcdca8e674244e51c7ce3a6b83e59b44d520e16e3735952cdd1c6da9edca51a755b343323f6f37c7ea7093708212300974e41560d15ee6ef'
+        '5faa0c65de5186dd225afcb58d0d0b2fddf2f2a7008f7a7d84bf14e78a23dbf08ae04c016d3c8241359ec9eb286f5186a7ae84ce03446f37e56fc2667fa1c114'
+        'e0acea294146ae14ec18ac1f99cb9113dfe0dbe87cfd557fb093b56fc15cf036ac076af905fbe358a11a913d2fc845619c5fd8e18ac97127c232127a28666117')
 validpgpkeys=(
   108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE  # Rust Language (Tag and Release Signing Key) <rust-key@rust-lang.org>
-  474E22316ABF4785A88C6E8EA2C794A986419D8A  # Tom Stellard <tstellar@redhat.com>
 )
 
 prepare() {
   cd rustc-$pkgver-src
-
-  if ! rustc --version | grep 1.69.0 >/dev/null 2>&1; then
-    rustup toolchain install 1.69.0
-    rustup default 1.69.0
-  fi
 
   # Patch bootstrap and cargo so credential helpers
   # are in /usr/lib instead of /usr/libexec
   patch -d src/tools/cargo -Np1 < ../0001-cargo-Change-libexec-dir.patch
   patch -Np1 -i ../0001-bootstrap-Change-libexec-dir.patch
 
+  # Put bash completions where they belong
+  patch -Np1 -i ../0002-bootstrap-Change-bash-completion-dir.patch
+
   # Use our *-pc-linux-gnu targets, making LTO with clang simpler
-  patch -Np1 -i ../0002-compiler-Change-LLVM-targets.patch
+  patch -Np1 -i ../0003-compiler-Change-LLVM-targets.patch
 
   # Use our wasm-ld
-  patch -Np1 -i ../0003-compiler-Use-wasm-ld-for-wasm-targets.patch
+  patch -Np1 -i ../0004-compiler-Use-wasm-ld-for-wasm-targets.patch
 
   cat >config.toml <<END
 profile = "user"
@@ -95,7 +94,6 @@ changelog-seen = 2
 
 [llvm]
 link-shared = true
-#download-ci-llvm = false
 
 [build]
 target = [
@@ -155,7 +153,7 @@ cc = "/usr/bin/gcc"
 cxx = "/usr/bin/g++"
 ar = "/usr/bin/gcc-ar"
 ranlib = "/usr/bin/gcc-ranlib"
-#llvm-config = "/usr/bin/llvm-config"
+llvm-config = "/usr/bin/llvm-config"
 
 [target.i686-unknown-linux-gnu]
 cc = "/usr/bin/gcc"
@@ -198,6 +196,7 @@ build() {
   cd ../dest-rust
 
   # delete unnecessary files, e.g. files only used for the uninstall script
+  rm usr/bin/*.old
   rm usr/lib/rustlib/{components,install.log,rust-installer-version,uninstall.sh}
   rm usr/lib/rustlib/manifest-*
 
@@ -206,9 +205,6 @@ build() {
   mkdir -p usr/lib32
   ln -srft usr/lib   usr/lib/rustlib/x86_64-unknown-linux-gnu/lib/*.so
   ln -srft usr/lib32 usr/lib/rustlib/i686-unknown-linux-gnu/lib/*.so
-
-  mkdir -p usr/share/bash-completion
-  mv etc/bash_completion.d usr/share/bash-completion/completions
 
   mkdir -p usr/share/licenses/rust
   mv -t usr/share/licenses/rust usr/share/doc/rust/{COPYRIGHT,LICENSE*}
